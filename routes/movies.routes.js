@@ -43,13 +43,22 @@ router.get('/movies', (req, res, next) => {
     Movie.findById(req.params.id)
     .populate('cast')
     .then ((response) => {
-      console.log({response})
       res.render('movies/movie-details.hbs', {response})
     })
     .catch((error) => {
       next(error);
     })
   }) 
+
+  router.post('/movies/:id/delete', (req, res, next) => {
+    Movie.findByIdAndRemove(req.params.id)
+    .then(() => {
+      res.redirect('/movies')
+    })
+    .catch((err) => {
+      next(err);
+    });
+  });
 
 
   
