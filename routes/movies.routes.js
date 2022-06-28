@@ -1,6 +1,7 @@
 const Movie = require("../models/Movie.model");
 
 const router = require("express").Router();
+const Celebrity = require("../models/Celebrity.model.js")
 
 
 router.get('/movies', (req, res, next) => {
@@ -14,9 +15,9 @@ router.get('/movies', (req, res, next) => {
   });
 
   router.get('/movies/create', (req, res, next) => {
-    Movie.create()  
-      .then(() => {
-        res.render('movies/new-movie.hbs');
+    Celebrity.find() 
+      .then((allCelebrities) => {
+        res.render('movies/new-movie.hbs', {allCelebrities});
       })
       .catch((error) => {
         next(error);
@@ -30,13 +31,28 @@ router.get('/movies', (req, res, next) => {
       plot: req.body.plot,
       cast: req.body.cast
     })
-      .then(() => {
+      .then((response) => {
         res.redirect('/movies')
       })
       .catch(() => {
         res.render('/movies/new-movie.hbs')
       })
   });
+
+  router.get('/movies/:id', (req, res, next) => {
+    Movie.findById(req.params.id)
+    .populate('cast')
+    .then ((response) => {
+      console.log({response})
+      res.render('movies/movie-details.hbs', {response})
+    })
+    .catch((error) => {
+      next(error);
+    })
+  }) 
+
+
+  
 // all your routes here
 
 module.exports = router;
